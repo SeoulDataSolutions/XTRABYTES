@@ -131,6 +131,7 @@ CBlock* CreateNewBlock(CWallet* pwallet, bool fProofOfStake, int64_t* pFees)
     txNew.vin[0].prevout.SetNull();
     txNew.vout.resize(1);
 
+    // BG: need work. look unreliable
     if (fProofOfSignature) {
 	        char* targetAddress;
 	        
