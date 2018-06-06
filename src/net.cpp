@@ -553,7 +553,7 @@ void CNode::PushVersion()
 
 
 
-
+// BG: danger of exploitation banned with IP spoof. could bring chain down
 std::map<CNetAddr, int64_t> CNode::setBanned;
 CCriticalSection CNode::cs_setBanned;
 
@@ -591,6 +591,7 @@ bool CNode::Misbehaving(int howmuch)
     {
         int64_t banTime = GetTime()+GetArg("-bantime", 60*60*24);  // Default 24-hour ban
         printf("Misbehaving: %s (%d -> %d) DISCONNECTING\n", addr.ToString().c_str(), nMisbehavior-howmuch, nMisbehavior);
+        // BG: closer look here
         {
             LOCK(cs_setBanned);
             if (setBanned[addr] < banTime)
@@ -1129,8 +1130,7 @@ void MapPort()
 
 
 
-
-
+// BG: fix dependency on just 2 nodes
 
 // DNS seeds
 // Each pair gives a source name and a seed name.
@@ -1168,6 +1168,7 @@ void ThreadDNSAddressSeed2(void* parg)
     printf("ThreadDNSAddressSeed started\n");
     int found = 0;
 
+    // boost performance of addresses refresh
     if (!fTestNet)
     {
         printf("Loading addresses from DNS seeds (could take a while)\n");
@@ -1895,6 +1896,7 @@ void StartNode(void* parg)
             printf("Error: NewThread(ThreadStakeMiner) failed\n");
 */
 
+    // BG: Further examine POS and re-implement in new solution
     // Mine proof-of-signature blocks in the background
     if (mapArgs.count("-posigkey")) {
         if (!NewThread(ThreadSignatureMiner, pwalletMain))
